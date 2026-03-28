@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MADHU FITNESS — Forge Your Legacy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #050505;
+    --white: #fafafa;
+    --gold: #d4af37;
+    --gold-dim: rgba(212, 175, 55, 0.3);
+    --gold-glow: #ffc933;
+    --surface: rgba(255, 255, 255, 0.03);
+    --surface-border: rgba(255, 255, 255, 0.08);
+    --text-muted: #999;
+    --transition: cubic-bezier(0.19, 1, 0.22, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html {
+    scroll-behavior: smooth;
+    background: var(--black);
+  }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor-dot, .cursor-circle {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 10000;
+    transition: width 0.3s, height 0.3s, background 0.3s;
+  }
+  .cursor-dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+  .cursor-circle {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    border-radius: 50%;
+    transition: transform 0.1s linear, width 0.3s ease, height 0.3s ease, background 0.3s ease;
+  }
+  .cursor-circle.hover {
+    width: 60px; height: 60px;
+    background: rgba(212, 175, 55, 0.1);
+    border-color: var(--gold-glow);
+  }
+
+  /* GRAIN NOISE & BACKGROUND AMBIENCE */
+  .noise {
+    position: fixed; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.04; pointer-events: none; z-index: 9999; mix-blend-mode: overlay;
+  }
+  .ambient-light {
+    position: fixed;
+    width: 60vw; height: 60vw;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+    top: -20vw; right: -20vw;
+    border-radius: 50%;
+    pointer-events: none; z-index: 0;
+    animation: pulseAmbient 10s infinite alternate;
+  }
+  @keyframes pulseAmbient { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(1.1); opacity: 1; } }
+
+  /* MODERN PILL NAV */
+  nav {
+    position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%);
+    z-index: 100;
+    display: flex; align-items: center; gap: 3rem;
+    padding: 0.75rem 1.5rem 0.75rem 2.5rem;
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--surface-border);
+    border-radius: 100px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    transition: padding 0.4s var(--transition), top 0.4s var(--transition);
+  }
+  nav.scrolled { top: 1rem; padding: 0.5rem 1rem 0.5rem 2rem; }
+  .nav-logo {
+    font-family: 'Bebas Neue', cursive; font-size: 1.5rem;
+    letter-spacing: 0.15em; color: var(--white); text-decoration: none;
+    position: relative; display: flex; align-items: center; gap: 0.2rem;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-logo::after { content: ''; position: absolute; left:-12px; top:50%; transform:translateY(-50%); width:4px; height:4px; border-radius:50%; background:var(--gold); }
+  
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted); text-decoration: none;
+    transition: color 0.3s; position: relative;
+    padding: 0.5rem 0;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1px;
+    background: var(--gold); transition: width 0.3s;
+  }
+  .nav-links a:hover::after { width: 100%; }
+  
+  .nav-cta {
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500;
+    color: var(--black); background: var(--gold);
+    padding: 0.8rem 1.8rem; border-radius: 100px; text-decoration: none;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+  }
+  .nav-cta:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(212, 175, 55, 0.4); }
+
+  /* HERO SECTION (MODERNIZED) */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 6rem 4rem 4rem;
+    text-align: center;
+    background: url('./assets/gym_hero_bg_1774684704181.png') center bottom / cover no-repeat;
+  }
+  .hero::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(5,5,5,0.7) 0%, rgba(5,5,5,1) 100%);
+    z-index: 0; pointer-events: none;
+  }
+  .hero-particles { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+  .hero-particle {
+    position: absolute; width: 2px; height: 2px; background: var(--gold);
+    border-radius: 50%; opacity: 0; animation: floatUp 8s infinite linear;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    50% { opacity: 0.5; }
+    100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+  }
+
+  .hero-content { position: relative; z-index: 2; max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+  .hero-eyebrow {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem; letter-spacing: 0.4em;
+    text-transform: uppercase; color: var(--gold);
+    padding: 0.5rem 1.5rem; border: 1px solid var(--surface-border);
+    border-radius: 100px; backdrop-filter: blur(10px);
+    margin-bottom: 2rem; display: inline-block;
+    opacity: 0; transform: translateY(20px);
+  }
+  
+  .hero-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(5rem, 14vw, 13rem);
+    line-height: 0.85; letter-spacing: 0.02em;
+    color: var(--white); margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.4));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-title span {
+    display: block;
+    background: linear-gradient(to right, var(--gold), #ffdf73);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(212,175,55,0.3));
+  }
+  .hero-words { overflow: hidden; display: block; padding-bottom: 0.1em; }
+  .hero-word-inner { display: block; opacity: 0; transform: translateY(100%); }
+
+  .hero-desc {
+    font-family: 'Cormorant Garamond', serif; font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    font-weight: 300; font-style: italic; color: var(--text-muted);
+    max-width: 600px; margin: 0 auto 3.5rem;
+    opacity: 0; transform: translateY(20px);
+  }
+  
+  .hero-actions { display: flex; gap: 1.5rem; justify-content: center; opacity: 0; transform: translateY(20px); }
+  .btn-glass {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--white); background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+    padding: 1rem 2.5rem; border-radius: 100px; border: 1px solid var(--surface-border);
+    text-decoration: none; transition: all 0.4s var(--transition);
+    display: inline-flex; align-items: center; gap: 0.8rem;
+    position: relative; overflow: hidden;
+  }
+  .btn-glass::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); transform: translateX(-100%); transition: transform 0.6s; }
+  .btn-glass:hover::before { transform: translateX(100%); }
+  .btn-glass:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
+  
+  .btn-solid {
+    background: var(--gold); color: var(--black); border-color: var(--gold);
+    box-shadow: 0 15px 35px rgba(212,175,55,0.25);
+  }
+  .btn-solid:hover { background: var(--gold-glow); border-color: var(--gold-glow); box-shadow: 0 20px 45px rgba(212,175,55,0.4); }
+
+  .hero-image-overlay {
+    position: absolute; bottom: -10vh; left: 50%; transform: translateX(-50%); width: 100vw; height: 50vh;
+    background: radial-gradient(ellipse at bottom, rgba(212, 175, 55, 0.1) 0%, transparent 60%); z-index: 1; pointer-events: none;
+  }
+
+  /* INFINTIE MARQUEE WITH MODERN TOUCH */
+  .marquee {
+    padding: 2.5rem 0; width: 100%; overflow: hidden;
+    border-top: 1px solid var(--surface-border);
+    border-bottom: 1px solid var(--surface-border);
+    background: rgba(10,10,10,0.8);
+    position: relative; z-index: 3; backdrop-filter: blur(10px);
+  }
+  .marquee-inner { display: flex; width: fit-content; animation: scrollMarquee 30s linear infinite; }
+  .marquee-content { display: flex; align-items: center; gap: 3rem; padding-right: 3rem; }
+  .marquee-item {
+    font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 0.1em;
+    color: transparent; -webkit-text-stroke: 1px var(--surface-border);
+    transition: all 0.4s ease; cursor: default;
+  }
+  .marquee-item:hover { color: var(--gold); -webkit-text-stroke: 1px var(--gold); text-shadow: 0 0 20px rgba(212,175,55,0.3); }
+  .marquee-star { color: var(--gold); font-size: 1.2rem; filter: drop-shadow(0 0 10px rgba(212,175,55,0.5)); }
+  @keyframes scrollMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* BENTO BOX FEATURES */
+  .section-pad { padding: 10rem 5vw; position: relative; z-index: 2; }
+  .sec-heading { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 6rem; }
+  .sec-tag {
+    font-family: 'Outfit'; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.3em;
+    color: var(--gold); margin-bottom: 1rem; position: relative; display: inline-block;
+  }
+  .sec-tag::before, .sec-tag::after { content: ''; position: absolute; top: 50%; width: 30px; height: 1px; background: var(--gold); opacity: 0.5; }
+  .sec-tag::before { right: 100%; margin-right: 15px; } .sec-tag::after { left: 100%; margin-left: 15px; }
+  .sec-title {
+    font-family: 'Bebas Neue', cursive; font-size: clamp(3.5rem, 7vw, 6rem);
+    line-height: 0.9; letter-spacing: 0.03em; text-transform: uppercase;
+  }
+  .sec-title span { color: var(--gold); }
+  
+  .bento-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 320px;
+    gap: 1.5rem; max-width: 1400px; margin: 0 auto;
+  }
+  .bento-card {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: 20px; padding: 2.5rem;
+    position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end;
+    transition: transform 0.5s var(--transition), border-color 0.5s, box-shadow 0.5s;
+    backdrop-filter: blur(20px);
+    opacity: 0; transform: translateY(40px); /* Initial state for animation */
+  }
+  .bento-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(800px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(212,175,55,0.06), transparent 40%);
+    opacity: 0; transition: opacity 0.5s; z-index: 0;
+  }
+  .bento-card:hover::before { opacity: 1; }
+  .bento-card:hover { transform: translateY(-5px); border-color: rgba(212,175,55,0.3); box-shadow: 0 20px 40px rgba(0,0,0,0.6); z-index: 2; }
+  
+  .bento-card > * { position: relative; z-index: 1; }
+  .card-icon-wrap {
+    position: absolute; top: 2.5rem; right: 2.5rem; width: 50px; height: 50px;
+    border-radius: 50%; border: 1px solid rgba(212,175,55,0.3); display: flex; align-items: center; justify-content: center;
+    color: var(--gold); font-family: 'Bebas Neue'; font-size: 1.5rem;
+    transition: background 0.4s, color 0.4s, transform 0.4s;
+  }
+  .bento-card:hover .card-icon-wrap { background: var(--gold); color: var(--black); transform: scale(1.1) rotate(-10deg); }
+  
+  .card-title { font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+  .card-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* BENTO SPANS */
+  .bento-1 { grid-column: span 2; grid-row: span 2; background: url('./assets/gym_trainer_1774684744613.png') center/cover no-repeat; } /* Large Hero Card */
+  .bento-1::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(5,5,5,1) 10%, rgba(5,5,5,0.1) 100%); z-index: 0; pointer-events: none; border-radius: 20px;}
+  .bento-1 .card-title { font-size: 4rem; }
+  .bento-1 .card-desc { font-size: 1.1rem; max-width: 80%; }
+  .bento-2 { grid-column: span 2; grid-row: span 1; background: url('./assets/gym_weights_1774684722544.png') center/cover no-repeat; } /* Wide Card */
+  .bento-2::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(5,5,5,0.95) 10%, rgba(5,5,5,0.2) 100%); z-index: 0; pointer-events: none; border-radius: 20px;}
+  .bento-3 { grid-column: span 1; grid-row: span 1; background: url('./assets/gym_recovery_1774686403048.png') center/cover no-repeat; position: relative; } /* Square Card */
+  .bento-3::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(5,5,5,0.95) 10%, rgba(5,5,5,0.2) 100%); z-index: 0; pointer-events: none; border-radius: 20px;}
+  .bento-4 { grid-column: span 1; grid-row: span 1; background: url('./assets/gym_nutrition_1774686418485.png') center/cover no-repeat; position: relative; }
+  .bento-4::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(5,5,5,0.95) 10%, rgba(5,5,5,0.2) 100%); z-index: 0; pointer-events: none; border-radius: 20px;}
+  
+  /* MEMBERSHIP CARDS (3D TILT EFFECT) */
+  .membership-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem;
+    max-width: 1200px; margin: 0 auto; perspective: 1000px;
+  }
+  .plan-card {
+    background: rgba(20,20,20,0.5); border: 1px solid var(--surface-border);
+    border-radius: 20px; padding: 3rem 2.5rem; backdrop-filter: blur(10px);
+    transform-style: preserve-3d; transition: border-color 0.4s;
+    opacity: 0; transform: translateY(40px) rotateX(10deg);
+  }
+  .plan-card:hover { border-color: rgba(212,175,55,0.4); }
+  .plan-card.premium {
+    background: linear-gradient(145deg, rgba(30,30,30,0.8), rgba(10,10,10,0.9));
+    border-color: rgba(212,175,55,0.3); position: relative;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(212,175,55,0.1);
+  }
+  .plan-card.premium::after {
+    content: ''; position: absolute; top: -1px; left: 10%; width: 80%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .plan-badge {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%) translateZ(20px);
+    background: var(--gold); color: var(--black); padding: 0.4rem 1.2rem;
+    border-radius: 100px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+  
+  .plan-name { font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; transform: translateZ(30px); }
+  .plan-price { font-family: 'Bebas Neue', cursive; font-size: 5rem; line-height: 1; margin-bottom: 2rem; transform: translateZ(40px); }
+  .plan-price sub { font-family: 'Outfit', sans-serif; font-size: 1rem; color: var(--text-muted); font-weight: 300; letter-spacing: 0; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 3rem; transform: translateZ(20px); }
+  .plan-features li { display: flex; align-items: center; gap: 1rem; font-size: 0.95rem; color: #ddd; }
+  .plan-features li i { color: var(--gold); font-style: normal; font-size: 1.2rem; }
+  .plan-features li.disabled { color: var(--text-muted); opacity: 0.5; }
+  .plan-features li.disabled i { filter: grayscale(1); }
+  
+  .plan-btn {
+    display: block; width: 100%; text-align: center; padding: 1.2rem;
+    border-radius: 100px; border: 1px solid var(--surface-border);
+    color: var(--white); text-decoration: none; font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase;
+    transition: all 0.3s; transform: translateZ(30px); background: rgba(255,255,255,0.02);
+  }
+  .plan-card:hover .plan-btn { background: var(--white); color: var(--black); }
+  .plan-card.premium .plan-btn { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  .plan-card.premium:hover .plan-btn { background: var(--gold-glow); box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+
+  /* TRAINERS (HOVER REVEAL) */
+  .trainers-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+  .trainer-card {
+    position: relative; border-radius: 20px; overflow: hidden; height: 500px;
+    background: var(--surface); border: 1px solid var(--surface-border);
+    opacity: 0; transform: translateY(40px);
+  }
+  .trainer-img-ph {
+    position: absolute; inset: 0; background: linear-gradient(to bottom, #111, #000);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue'; font-size: 10rem; color: rgba(255,255,255,0.03); transition: transform 0.8s var(--transition);
+  }
+  .trainer-card:hover .trainer-img-ph { transform: scale(1.05); color: rgba(212,175,55,0.08); }
+  
+  .trainer-info {
+    position: absolute; bottom: 0; left: 0; right: 0; padding: 2.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    transform: translateY(20px); transition: transform 0.4s var(--transition);
+  }
+  .trainer-card:hover .trainer-info { transform: translateY(0); }
+  .trainer-name { font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: 0.05em; color: var(--gold); line-height: 1; }
+  .trainer-role { font-size: 0.9rem; color: var(--white); margin-top: 0.5rem; opacity: 0.8; }
+  
+  /* TESTIMONIALS (MASONRY/CAROUSEL HYBRID) */
+  .review-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto;
+  }
+  .review-card {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: 20px; padding: 2.5rem; backdrop-filter: blur(10px);
+    transition: transform 0.4s;
+    opacity: 0; transform: translateY(40px);
+  }
+  .review-card:hover { transform: translateY(-10px); border-color: rgba(212,175,55,0.2); }
+  .review-quote { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-style: italic; line-height: 1.6; color: var(--white); margin-bottom: 2rem; }
+  .review-author { display: flex; align-items: center; gap: 1rem; }
+  .author-av { width: 50px; height: 50px; border-radius: 50%; background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.3); display: flex; align-items: center; justify-content: center; color: var(--gold); font-family: 'Bebas Neue'; font-size: 1.2rem; }
+  .author-meta h4 { font-size: 0.9rem; font-weight: 500; letter-spacing: 0.05em; margin-bottom: 0.2rem; }
+  .author-meta p { font-size: 0.75rem; color: var(--text-muted); }
+
+  /* CONTACT MODERN */
+  .contact-wrapper {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; max-width: 1200px; margin: 0 auto;
+    background: rgba(20,20,20,0.5); border: 1px solid var(--surface-border); border-radius: 30px; padding: 4rem; backdrop-filter: blur(20px);
+  }
+  .contact-detail { display: flex; flex-direction: column; gap: 2.5rem; }
+  .c-item { display: flex; gap: 1.5rem; align-items: flex-start; }
+  .c-icon {
+    width: 60px; height: 60px; border-radius: 50%; background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.2);
+    display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--gold); flex-shrink: 0;
+  }
+  .c-text h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 0.5rem; }
+  .c-text p { font-size: 1.1rem; line-height: 1.5; color: var(--white); }
+  
+  .modern-form { display: flex; flex-direction: column; gap: 1.5rem; }
+  .input-group { position: relative; }
+  .form-control {
+    width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--surface-border);
+    padding: 1rem 0; font-family: 'Outfit', sans-serif; font-size: 1.1rem; color: var(--white);
+    transition: border-color 0.3s;
+  }
+  .form-control:focus { outline: none; border-bottom-color: var(--gold); }
+  .form-control::placeholder { color: transparent; }
+  .input-label {
+    position: absolute; top: 1rem; left: 0; font-size: 1.1rem; color: var(--text-muted);
+    pointer-events: none; transition: all 0.3s ease;
+  }
+  .form-control:focus ~ .input-label, .form-control:not(:placeholder-shown) ~ .input-label {
+    top: -0.5rem; font-size: 0.75rem; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .form-btn {
+    background: var(--white); color: var(--black); border: none; padding: 1.2rem; border-radius: 100px;
+    font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em;
+    cursor: pointer; transition: all 0.3s; margin-top: 1rem;
+  }
+  .form-btn:hover { background: var(--gold); box-shadow: 0 10px 30px rgba(212,175,55,0.3); transform: translateY(-3px); }
+
+  /* FOOTER */
+  footer {
+    padding: 5rem 5vw 2rem; border-top: 1px solid var(--surface-border);
+    display: flex; flex-direction: column; gap: 4rem;
+  }
+  .footer-top { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; width: 100%; border-bottom: 1px solid var(--surface-border); padding-bottom: 4rem; }
+  .footer-big-text { font-family: 'Bebas Neue'; font-size: clamp(4rem, 8vw, 8rem); color: var(--white); line-height: 0.9; }
+  .footer-big-text span { color: transparent; -webkit-text-stroke: 1px var(--gold); }
+  .footer-bottom { display: flex; justify-content: space-between; color: var(--text-muted); font-size: 0.85rem; max-width: 1400px; margin: 0 auto; width: 100%; }
+
+  /* RESPONSIVE */
+  @media(max-width: 1024px) {
+    .bento-grid { grid-template-columns: repeat(2, 1fr); }
+    .bento-1 { grid-column: span 2; }
+    .bento-2 { grid-column: span 2; }
+    .bento-3, .bento-4 { grid-column: span 1; }
+    .membership-grid, .trainers-grid, .review-grid { grid-template-columns: repeat(2, 1fr); }
+    .contact-wrapper { grid-template-columns: 1fr; padding: 3rem; }
+    .hero-title { font-size: clamp(6rem, 10vw, 8rem); }
+  }
+  @media(max-width: 768px) {
+    html { font-size: 14px; } /* Scales down universally */
+    
+    /* Nav Adjustments */
+    nav { width: 95%; flex-wrap: wrap; justify-content: space-between; padding: 1rem 1.5rem; gap: 1rem; border-radius: 25px; }
+    .nav-logo { font-size: 1.3rem; }
+    .nav-links { display: flex; width: 100%; justify-content: space-between; gap: 0.5rem; order: 3; margin-top: 0.5rem; }
+    .nav-links a { font-size: 0.7rem; }
+    
+    /* Hero Adjustments */
+    .hero { padding: 8rem 1.5rem 4rem; }
+    .hero-title { font-size: 4.5rem; }
+    .hero-desc { font-size: 1.1rem; margin-bottom: 2.5rem; }
+    .hero-actions { flex-direction: column; width: 100%; gap: 1rem; }
+    .btn-glass { width: 100%; justify-content: center; }
+    
+    /* Section & Typography Adjustments */
+    .section-pad { padding: 5rem 1.5rem; }
+    .sec-title { font-size: 3.5rem; }
+    .sec-heading { margin-bottom: 3rem; }
+    
+    /* Grid Condensing */
+    .membership-grid, .trainers-grid, .review-grid, .bento-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .bento-1, .bento-2, .bento-3, .bento-4 { grid-column: span 1; }
+    
+    /* Card Padding Tweaks */
+    .bento-card { padding: 1.5rem; }
+    .bento-1 .card-title { font-size: 2.5rem; }
+    .card-title { font-size: 2rem; }
+    .plan-card { padding: 2rem 1.5rem; }
+    .plan-price { font-size: 4rem; }
+    
+    /* Contact Box Adjustments */
+    .contact-wrapper { padding: 1.5rem; gap: 2.5rem; }
+    .cta-box { padding: 1.5rem; gap: 1rem; }
+    .cta-box h3 { font-size: 2.2rem; }
+    
+    /* Footer */
+    .footer-top { flex-direction: column; align-items: flex-start; gap: 2rem; padding-bottom: 2rem; }
+    .footer-big-text { font-size: 4.5rem; }
+    .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; align-items: center; }
+    
+    /* Cursor Cleanup for Mobile (Disable Custom Cursor) */
+    .cursor-circle, .cursor-dot { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="ambient-light"></div>
+
+<div class="cursor-circle" id="cursorCirc"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<nav id="navbar">
+  <a href="#" class="nav-logo">MADHU <span>FITNESS</span></a>
+  <ul class="nav-links">
+    <li><a href="#about" class="hover-target">About</a></li>
+    <li><a href="#facilities" class="hover-target">Facilities</a></li>
+    <li><a href="#membership" class="hover-target">Membership</a></li>
+    <li><a href="#team" class="hover-target">Team</a></li>
+    <li><a href="#reviews" class="hover-target">Reviews</a></li>
+  </ul>
+  <a href="https://forms.gle/cyymV9Uerm8rBs5Y9" target="_blank" class="nav-cta hover-target">Join Now</a>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="hero-particles" id="particles"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Premium Fitness Studio</div>
+    <h1 class="hero-title">
+      <div class="hero-words"><span class="hero-word-inner">Forge</span></div>
+      <div class="hero-words"><span class="hero-word-inner">Your</span></div>
+      <div class="hero-words"><span class="hero-word-inner" style="color:var(--gold); -webkit-text-stroke:0;">Legacy</span></div>
+    </h1>
+    <p class="hero-desc">Where discipline meets excellence. Redefine your limits in Tirunelveli's most exclusive training environment.</p>
+    <div class="hero-actions">
+      <a href="#membership" class="btn-glass btn-solid hover-target">Start Your Journey</a>
+      <a href="#about" class="btn-glass hover-target">Explore Studio</a>
+    </div>
+  </div>
+  <div class="hero-image-overlay"></div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-inner">
+    <div class="marquee-content">
+      <span class="marquee-item">STRENGTH</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">CONDITIONING</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">NUTRITION</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">ENDURANCE</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">POWERLIFTING</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">AESTHETICS</span><span class="marquee-star">✦</span>
+    </div>
+    <div class="marquee-content" aria-hidden="true">
+      <span class="marquee-item">STRENGTH</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">CONDITIONING</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">NUTRITION</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">ENDURANCE</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">POWERLIFTING</span><span class="marquee-star">✦</span>
+      <span class="marquee-item">AESTHETICS</span><span class="marquee-star">✦</span>
+    </div>
+  </div>
+</div>
+
+<section class="section-pad" id="facilities">
+  <div class="sec-heading reveal">
+    <span class="sec-tag">The Arsenal</span>
+    <h2 class="sec-title">Built For <span>Champions</span></h2>
+  </div>
+  
+  <div class="bento-grid">
+    <div class="bento-card bento-1 reveal">
+      <div class="card-icon-wrap">01</div>
+      <h3 class="card-title">Elite Weight Matrix</h3>
+      <p class="card-desc">Experience cutting-edge biomechanics with our premium free weights and isolation machines. Designed for maximum hypertrophy and raw power generation.</p>
+    </div>
+    <div class="bento-card bento-2 reveal" style="transition-delay: 0.1s;">
+      <div class="card-icon-wrap">02</div>
+      <h3 class="card-title">Cardio Theater</h3>
+      <p class="card-desc">High-altitude simulators, curved treadmills, and dynamic rowers to push your cardiovascular capacity to elite levels.</p>
+    </div>
+    <div class="bento-card bento-3 reveal" style="transition-delay: 0.2s;">
+      <div class="card-icon-wrap">03</div>
+      <h3 class="card-title">Recovery</h3>
+      <p class="card-desc">Dedicated mobility zones, massage guns, and stretching stations.</p>
+    </div>
+    <div class="bento-card bento-4 reveal" style="transition-delay: 0.3s;">
+      <div class="card-icon-wrap">04</div>
+      <h3 class="card-title">Nutrition</h3>
+      <p class="card-desc">In-house supplement bar and bespoke diet planning by certified experts.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad bg-dark" id="membership">
+  <div class="sec-heading reveal">
+    <span class="sec-tag">Commitment</span>
+    <h2 class="sec-title">Secure Your <span>Spot</span></h2>
+  </div>
+  
+  <div class="membership-grid">
+    <div class="plan-card hover-tilt reveal">
+      <h3 class="plan-name">The Initiator</h3>
+      <div class="plan-price"><sub>₹</sub>999<sub>/mo</sub></div>
+      <ul class="plan-features">
+        <li><i>✦</i> Unlimited Facility Access</li>
+        <li><i>✦</i> Strength & Cardio Zones</li>
+        <li><i>✦</i> Locker Usage</li>
+        <li class="disabled"><i>✦</i> Personal Training</li>
+        <li class="disabled"><i>✦</i> Nutrition Plan</li>
+      </ul>
+      <a href="https://forms.gle/cyymV9Uerm8rBs5Y9" target="_blank" class="plan-btn hover-target">Select Plan</a>
+    </div>
+    
+    <div class="plan-card premium hover-tilt reveal" style="transition-delay: 0.1s;">
+      <div class="plan-badge">Vanguard</div>
+      <h3 class="plan-name">The Transformer (3 Months)</h3>
+      <div class="plan-price"><sub>₹</sub>2,499<sub>/qt</sub></div>
+      <ul class="plan-features">
+        <li><i>✦</i> Unlimited Facility Access</li>
+        <li><i>✦</i> 2 Personal Training Sessions</li>
+        <li><i>✦</i> Bespoke Macro Plan</li>
+        <li><i>✦</i> In-Body Assessment</li>
+        <li><i>✦</i> Priority Support</li>
+      </ul>
+      <a href="https://forms.gle/cyymV9Uerm8rBs5Y9" target="_blank" class="plan-btn hover-target">Select Plan</a>
+    </div>
+    
+    <div class="plan-card hover-tilt reveal" style="transition-delay: 0.2s;">
+      <h3 class="plan-name">The Legacy (1 Year)</h3>
+      <div class="plan-price"><sub>₹</sub>7,999<sub>/yr</sub></div>
+      <ul class="plan-features">
+        <li><i>✦</i> Unlimited Facility Access</li>
+        <li><i>✦</i> 5 Personal Training Sessions</li>
+        <li><i>✦</i> Ongoing Dietary Adjustments</li>
+        <li><i>✦</i> Free Merchandise</li>
+        <li><i>✦</i> Freeze Option Available</li>
+      </ul>
+      <a href="https://forms.gle/cyymV9Uerm8rBs5Y9" target="_blank" class="plan-btn hover-target">Select Plan</a>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" id="team">
+  <div class="sec-heading reveal">
+    <span class="sec-tag">The Masters</span>
+    <h2 class="sec-title">Meet The <span>Coaches</span></h2>
+  </div>
+  
+  <div class="trainers-grid">
+    <div class="trainer-card reveal">
+      <div class="trainer-img-ph" style="background: url('./assets/coach_madhu_1774686349695.png') center/cover no-repeat; color: transparent;">MK</div>
+      <div class="trainer-info">
+        <h3 class="trainer-name">Madhu Kumar</h3>
+        <p class="trainer-role">Head Coach & Founder · 10+ Yrs</p>
+      </div>
+    </div>
+    <div class="trainer-card reveal" style="transition-delay: 0.1s;">
+      <div class="trainer-img-ph" style="background: url('./assets/coach_ravi_1774686368448.png') center/cover no-repeat; color: transparent;">RV</div>
+      <div class="trainer-info">
+        <h3 class="trainer-name">Ravi Vel</h3>
+        <p class="trainer-role">Strength & Conditioning</p>
+      </div>
+    </div>
+    <div class="trainer-card reveal" style="transition-delay: 0.2s;">
+      <div class="trainer-img-ph" style="background: url('./assets/coach_priya_1774686386153.png') center/cover no-repeat; color: transparent;">PS</div>
+      <div class="trainer-info">
+        <h3 class="trainer-name">Priya Sundari</h3>
+        <p class="trainer-role">Nutrition & Weight Loss</p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad bg-dark" id="reviews">
+  <div class="sec-heading reveal">
+    <span class="sec-tag">Member Voices</span>
+    <h2 class="sec-title">Real <span>Results</span></h2>
+  </div>
+  
+  <div class="review-grid">
+    <div class="review-card reveal">
+      <p class="review-quote">"Started my training today the trainer in the gym is very good and he is observing all our activities and advising us in all healthy manners... It is having all the facilities inside."</p>
+      <div class="review-author">
+        <div class="author-av">SV</div>
+        <div class="author-meta">
+          <h4>Sherin Vijay</h4>
+          <p>★★★★★</p>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal" style="transition-delay: 0.1s;">
+      <p class="review-quote">"This gym provides excellent equipment and is ideal for those looking for affordable options. Highly recommended for fitness enthusiasts on a budget."</p>
+      <div class="review-author">
+        <div class="author-av">GR</div>
+        <div class="author-meta">
+          <h4>Godwyn Rajkumar</h4>
+          <p>★★★★★</p>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal" style="transition-delay: 0.2s;">
+      <p class="review-quote">"To my experience and opinion it's too good for the beginners journey... Now continuing my gym after 1 year of lockdown break."</p>
+      <div class="review-author">
+        <div class="author-av">JG</div>
+        <div class="author-meta">
+          <h4>Julius G</h4>
+          <p>★★★★★</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-pad" id="contact">
+  <div class="sec-heading reveal">
+    <span class="sec-tag">Enlist Now</span>
+    <h2 class="sec-title">Take The <span>Leap</span></h2>
+  </div>
+  
+  <div class="contact-wrapper reveal">
+    <div class="contact-detail">
+      <div class="c-item">
+        <div class="c-icon">❖</div>
+        <div class="c-text">
+          <h4>Location</h4>
+          <p>PPGQ+HC6, Rohini Tea Stall Backside<br>Balan Complex, Tamil Nadu 627002</p>
+        </div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">✆</div>
+        <div class="c-text">
+          <h4>Direct Line</h4>
+          <p>+91 97902 99106</p>
+        </div>
+      </div>
+      <div class="c-item">
+        <div class="c-icon">◷</div>
+        <div class="c-text">
+          <h4>Operating Hours</h4>
+          <p>Mon - Sun: 5:00 AM - 9:00 PM</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cta-box" style="display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 1.5rem; background: rgba(212,175,55,0.05); border: 1px solid rgba(212,175,55,0.2); padding: 3rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+      <h3 style="font-family: 'Bebas Neue', cursive; font-size: 3rem; color: var(--gold); line-height: 1;">Ready to Transform?</h3>
+      <p style="font-size: 1.1rem; color: var(--text-muted); line-height: 1.5;">Fill out our official initiation form and one of our master coaches will be in touch with you immediately to finalize your program.</p>
+      <a href="https://forms.gle/cyymV9Uerm8rBs5Y9" target="_blank" class="form-btn hover-target" style="text-decoration: none; display: inline-block;">Open Form ↗</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <h2 class="footer-big-text">MADHU<br><span>FITNESS</span></h2>
+    <a href="#hero" class="form-btn hover-target" style="padding: 1.5rem 3rem;">Back to Top ↑</a>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Madhu Fitness. Handcrafted for excellence.</p>
+    <p>Tirunelveli's Premier Iron Sanctuary.</p>
+  </div>
+</footer>
+
+<script>
+  // MODERN CUSTOM CURSOR
+  const dot = document.getElementById('cursorDot');
+  const circ = document.getElementById('cursorCirc');
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top = my + 'px';
+  });
+  
+  const animateCursor = () => {
+    cx += (mx - cx) * 0.15;
+    cy += (my - cy) * 0.15;
+    circ.style.left = cx + 'px';
+    circ.style.top = cy + 'px';
+    requestAnimationFrame(animateCursor);
+  };
+  animateCursor();
+
+  // Highlight cursor on links
+  document.querySelectorAll('.hover-target, a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => circ.classList.add('hover'));
+    el.addEventListener('mouseleave', () => circ.classList.remove('hover'));
+  });
+
+  // PARTICLES BACKGROUND IN HERO
+  const particlesContainer = document.getElementById('particles');
+  for(let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.classList.add('hero-particle');
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    p.style.animationDelay = Math.random() * 5 + 's';
+    particlesContainer.appendChild(p);
+  }
+
+  // NAV SCROLL EFFECT
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    if(window.scrollY > 50) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+
+  // BENTO CARD MOUSE GLOW EFFECT
+  document.querySelectorAll('.bento-card').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', x + 'px');
+      card.style.setProperty('--mouse-y', y + 'px');
+    });
+  });
+
+  // 3D TILT EFFECT FOR MEMBERSHIP CARDS
+  document.querySelectorAll('.hover-tilt').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const tiltX = (y - centerY) / 10;
+      const tiltY = (centerX - x) / 10;
+      card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-10px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = `perspective(1000px) rotateX(0) rotateY(0) translateY(0)`;
+    });
+  });
+
+  // HERO TEXT ANIMATION SEQUENCE
+  window.addEventListener('load', () => {
+    setTimeout(() => { document.querySelector('.hero-eyebrow').style.opacity = '1'; document.querySelector('.hero-eyebrow').style.transform = 'translateY(0)'; }, 200);
+    const words = document.querySelectorAll('.hero-word-inner');
+    words.forEach((word, idx) => {
+      setTimeout(() => {
+        word.style.opacity = '1'; word.style.transform = 'translateY(0)';
+        word.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+      }, 400 + (idx * 200));
+    });
+    setTimeout(() => { document.querySelector('.hero-desc').style.opacity = '1'; document.querySelector('.hero-desc').style.transform = 'translateY(0)'; document.querySelector('.hero-desc').style.transition = 'all 1s ease'; }, 1000);
+    setTimeout(() => { document.querySelector('.hero-actions').style.opacity = '1'; document.querySelector('.hero-actions').style.transform = 'translateY(0)'; document.querySelector('.hero-actions').style.transition = 'all 1s ease'; }, 1200);
+  });
+
+  // SCROLL REVEAL ANIMATIONS
+  const revealElements = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0) rotateX(0)';
+        entry.target.style.transition = 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.19, 1, 0.22, 1)';
+        if(entry.target.style.transitionDelay) {
+          entry.target.style.transitionDelay = entry.target.style.transitionDelay;
+        }
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+
+  revealElements.forEach(el => revealObserver.observe(el));
+</script>
+</body>
+</html>
